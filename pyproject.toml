@@ -1,0 +1,37 @@
+[project]
+name = "asynchronous-multi-server-fl"
+version = "1.3.10"
+description = "A simulation framework for Asynchronous Multi-Server Federated Learning."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [
+    { name = "Bart Cox", email = "b.a.cox@tudelft.nl" },
+    { name = "Yuncong Zuo", email = "zuoyuncong@gmail.com" },
+]
+
+[tool.ruff]
+src = ["."]
+lint.select = ["E", "F", "I"]
+lint.ignore = ["E501"]
+line-length = 88
+exclude = ["venv", ".venv", "build", "dist", "__pycache__"]
+
+[tool.black]
+line-length = 88
+target-version = ["py311"]
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+tag_format = "$version"
+version_scheme = "semver2"
+version_provider = "pep621"
+update_changelog_on_bump = false
+changelog_incremental = true
+changelog_file = "CHANGELOG.md"
+major_version_zero = false                 # or true if you're still pre-v1.0.0
+version_files = ["pyproject.toml:version"]
+# Only bump and tag manually during merge requests
+[tool.commitizen.bump]
+tag = false
+push = false

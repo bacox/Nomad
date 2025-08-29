@@ -1,0 +1,27 @@
+name: mobile_fl
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+  - defaults
+dependencies:
+  - torchdata==0.9.0
+  - pytorch==2.3.0
+  - torchvision==0.18.0 
+  - torchaudio==2.3.0 
+  - pytorch-cuda=11.8
+  - portalocker>=2.0.0
+  - scipy 
+  - matplotlib 
+  - shapely 
+  - scikit-learn 
+  - pandas 
+  - numpy 
+  - wandb
+  - colorama
+  - ruff
+  - mypy
+  - black
+  - commitizen
+  - toml==0.10.2
+  - tomli==2.2.1

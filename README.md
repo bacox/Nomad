@@ -1,12 +1,12 @@
 # Nomad: Asynchronous Multi-Server Federated Learning
 
-[![Python 3.9](https://img.shields.io/badge/python-3.9-blue.svg)](https://www.python.org/downloads/release/python-390/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Conda Environment](https://img.shields.io/badge/env-conda-blue)](https://docs.conda.io/)
+[![Python 3.9](https://img.shields.io/badge/python-3.9-blue.svg)](https://www.python.org/downloads/release/python-390/) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Conda Environment](https://img.shields.io/badge/env-conda-blue)](https://docs.conda.io/) ![Version](https://img.shields.io/badge/version-1.3.10-blue)
 
-![Version](https://img.shields.io/badge/version-1.3.10-blue)
+![Banner](./figures/banner.png)
 
 A simulation framework for **Asynchronous Multi-Server Federated Learning (FL)** with support for multiple aggregation strategies, client-server configurations, and dataset settings.
+
+![moveable-clients](./figures/movable-client.png)
 
 ---
 

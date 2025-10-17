@@ -223,6 +223,21 @@ Plot results:
 ./plotAll.sh <ResultFolderName> <time> <updates>
 ```
 
+## Citation
+
+If you use this code in your research or project, please cite the following paper:
+```bibtex
+@article{yuncong2024spyker,
+  title={Spyker: Asynchronous Multi-Server Federated Learning for Geo-Distributed Clients},
+  author={Yuncong Zuo and Bart Cox and Lydia Y. Chen and J{\'{e}}r{\'{e}}mie Decouchant},
+  journal={Middleware 2025},
+  year={2024},
+  url          = {https://doi.org/10.1145/3652892.3700778},
+  doi          = {10.1145/3652892.3700778},
+}
+```
+For more details, you can access the paper at https://doi.org/10.1145/3652892.3700778
+
 ---
 
 For any questions or issues, please refer to each module's README or contact the maintainers.

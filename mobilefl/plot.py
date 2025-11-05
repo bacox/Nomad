@@ -722,7 +722,7 @@ if __name__ == "__main__":
     print(last_exp)
     figuresize = (10, 5)  
     sns.set_style("whitegrid", {"axes.grid": False})
-    palette = ["#4477AA", "#117733", "#8f813d", "#CC6677", "
+    # palette = ["#4477AA", "#117733", "#8f813d", "#CC6677", "
     sns.set_context("talk", font_scale=1.2)
     sns.set_palette("Dark2")
     print(f"Plotting total server data with shape: {total_server_df.shape}")

@@ -9,7 +9,7 @@ A simulation framework for **Asynchronous Multi-Server Federated Learning (FL)**
 ---
 
 ## Requirements
-
+Use Python 3.9 to create a virtual environment.
 Install required packages manually:
 
 ```bash

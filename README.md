@@ -1,6 +1,6 @@
 # Nomad: Asynchronous Multi-Server Federated Learning
 
-[![Python 3.9](https://img.shields.io/badge/python-3.9-blue.svg)](https://www.python.org/downloads/release/python-390/) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Conda Environment](https://img.shields.io/badge/env-conda-blue)](https://docs.conda.io/) ![Version](https://img.shields.io/badge/version-1.3.10-blue)
+[![Python 3.9](https://img.shields.io/badge/python-3.9-blue.svg)](https://www.python.org/downloads/release/python-390/) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://docs.conda.io/) ![Version](https://img.shields.io/badge/version-1.3.10-blue)
 
 ![Banner](./figures/banner.png)
 
@@ -15,8 +15,7 @@ A simulation framework for **Asynchronous Multi-Server Federated Learning (FL)**
 Install required packages manually:
 
 ```bash
-
-pip install torch==2.3.0 torchvision==0.18.0 torchaudio==2.3.0 --index-url https://download.pytorch.org/whl/cu118 torchdata==0.9.0
+pip install torch==2.3.0 torchvision==0.18.0 torchaudio==2.3.0 --index-url https://download.pytorch.org/whl/cu118 torchdata==0.8.0
 pip -r requirements.txt
 ```
 
@@ -29,21 +28,6 @@ Add to `torch/utils/data/datapipes/utils/common.py
 # BC for torchdata
 DILL_AVAILABLE = dill_available()
 ```
-
-or
-
-```bash
-conda install pytorch==2.3.0 torchvision==0.18.0 torchaudio==2.3.0 pytorch-cuda=11.8 -c pytorch -c nvidia
-# CUDA 12.1
-```
-
-Or use Miniconda:
-
-```bash
-conda env create -f environment.yml
-conda activate mobile_fl
-```
-
 ---
 
 ## Running Linters
@@ -172,7 +156,7 @@ Log details are in `./log_tools/`.
 
 ---
 
-## ⚙️ Key Configuration Parameters
+## Key Configuration Parameters
 
 | Parameter                        | Description                                            |
 | -------------------------------- | ------------------------------------------------------ |
@@ -225,7 +209,9 @@ Plot results:
 
 ## Citation
 
-If you use this code in your research or project, please cite the following paper:
+If you use this code in your research or project, please cite the following papers.
+
+Spyker (Middleware 2024):
 ```bibtex
 @article{yuncong2024spyker,
   title={Spyker: Asynchronous Multi-Server Federated Learning for Geo-Distributed Clients},
@@ -236,7 +222,23 @@ If you use this code in your research or project, please cite the following pape
   doi          = {10.1145/3652892.3700778},
 }
 ```
-For more details, you can access the paper at https://doi.org/10.1145/3652892.3700778
+For more details, you can access the Spyker paper at https://doi.org/10.1145/3652892.3700778
+
+Nomad (NCA 2025):
+```bibtex
+@INPROCEEDINGS {11261552,
+author = { Cox, Bart and Chen, Lydia Y. and Decouchant, Jeremie },
+booktitle = { 2025 23rd International Symposium on Network Computing and Applications (NCA) },
+title = {{ Nomad: Accelerating Geo-distributed Learning with Client Transfers }},
+year = {2025},
+month = {Nov}
+pages = {1-8},
+doi = {10.1109/NCA67271.2025.00014},
+url = {https://doi.ieeecomputersociety.org/10.1109/NCA67271.2025.00014},
+publisher = {IEEE Computer Society}
+}
+```
+For more details, you can access the Nomad paper at https://doi.ieeecomputersociety.org/10.1109/NCA67271.2025.00014
 
 ---
 

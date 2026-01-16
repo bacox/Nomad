@@ -1,16 +1,18 @@
-name: mobile_fl
+name: mobile_fl_new2
 channels:
   - pytorch
   - nvidia
   - conda-forge
   - defaults
 dependencies:
+  - python==3.8
   - torchdata==0.9.0
   - pytorch==2.3.0
   - torchvision==0.18.0 
   - torchaudio==2.3.0 
   - pytorch-cuda=11.8
   - portalocker>=2.0.0
+  - torchtext==0.8
   - scipy 
   - matplotlib 
   - shapely 

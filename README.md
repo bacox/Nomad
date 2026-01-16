@@ -2,25 +2,22 @@
 
 [![Python 3.9](https://img.shields.io/badge/python-3.9-blue.svg)](https://www.python.org/downloads/release/python-390/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Conda Environment](https://img.shields.io/badge/env-conda-blue)](https://docs.conda.io/)
-
-
-![Version](https://img.shields.io/badge/version-__VERSION__-blue)
+![Version](https://img.shields.io/badge/version-1.3.10-blue)
 
 A simulation framework for **Asynchronous Multi-Server Federated Learning (FL)** with support for multiple aggregation strategies, client-server configurations, and dataset settings.
 
 ---
 
-## 🔧 Requirements
+## Requirements
 
 Install required packages manually:
 
 ```bash
-
 pip install torch==2.3.0 torchvision==0.18.0 torchaudio==2.3.0 --index-url https://download.pytorch.org/whl/cu118 torchdata==0.9.0
 pip -r requirements.txt
 ```
 
+### Problems
 If you get errors you can install `torchdata==0.7.1` but you'll have to make adjustment described here: [Github Issue](https://github.com/pytorch/pytorch/pull/122616/files)
 
 Add to `torch/utils/data/datapipes/utils/common.py
@@ -29,47 +26,22 @@ Add to `torch/utils/data/datapipes/utils/common.py
 # BC for torchdata
 DILL_AVAILABLE = dill_available()
 ```
-
-or
-```bash
-conda install pytorch==2.3.0 torchvision==0.18.0 torchaudio==2.3.0 pytorch-cuda=11.8 -c pytorch -c nvidia
-# CUDA 12.1
-```
-
-Or use Miniconda:
-
-```bash
-conda env create -f environment.yml
-conda activate mobile_fl
-```
-
 ---
 
-## Running Linters:
-
-### 🔍 Running Ruff
-```bash
-ruff check .
-# Or automatically fix problems
-ruff check --fix .
-```
-### 🎨 Running Black
-```bash
-black --check .
-```
-### 🧠 Running Mypy
-```bash
-mypy .
-```
-
-## 🚀 Running Experiments
+## Running Experiments
 
 ### Local Run
 
 ```bash
-python3 -m mobilefl comm100_mnist --print  # Verbose mode
-python3 -m mobilefl comm100_mnist          # Quiet mode
+python3 -m mobilefl <experiment-name> --print  # Verbose mode
+python3 -m mobilefl <experiment-name>          # Quiet mode
 ```
+
+### Example
+```bash
+python3 -m mobilefl example_mnist_nomad_latency_w0 --print  # Verbose mode
+```
+
 
 ### DAS-6 Cluster
 
@@ -81,12 +53,6 @@ module load cuda11.2/toolkit
 ```
 
 When you run new experiments, please check the configuration that "speed_flag" is not appeared, otherwise, you should rewrite the config file just as the example file that is shown before. And also please delete the `config_client_idcs.json` file.
-
-#### Test Example
-
-```bash
-python3 -m mobilefl example1 --print
-```
 
 #### With WandB Logging
 
@@ -110,7 +76,7 @@ nohup bash ./runDas.sh example1 -y > debug.out &  # Confirmed run
 
 ---
 
-## 📁 Creating New Configurations
+## Creating New Configurations
 
 1. Create folder: `./configurations/<NewConfig>`
 2. Copy an existing `config.json` into it.
@@ -145,7 +111,7 @@ This creates `./client100.pkl` to reuse fixed clients.
 
 ---
 
-## 📊 Plotting Results
+## Plotting Results
 
 ```bash
 python3 -m mobilefl.plot cifar10
@@ -158,7 +124,7 @@ Log details are in `./log_tools/`.
 
 ---
 
-## 🗂️ Adding New Datasets
+## Adding New Datasets
 
 * Add dataset logic in: `./data/data.py`
 * Add model in: `./models/`
@@ -166,7 +132,26 @@ Log details are in `./log_tools/`.
 
 ---
 
-## ⚙️ Key Configuration Parameters
+## Development
+### Running Linters:
+
+### Running Ruff
+```bash
+ruff check .
+# Or automatically fix problems
+ruff check --fix .
+```
+### Running Black
+```bash
+black --check .
+```
+### Running Mypy
+```bash
+mypy .
+```
+
+
+### Key Configuration Parameters
 
 | Parameter                        | Description                                            |
 | -------------------------------- | ------------------------------------------------------ |
@@ -192,7 +177,7 @@ Log details are in `./log_tools/`.
 
 ---
 
-## 📦 Reproducing Results
+## Reproducing Results
 
 ### CIFAR-10
 
@@ -216,6 +201,24 @@ Plot results:
 ./runAll.sh mnist <ResultFolderName>
 ./plotAll.sh <ResultFolderName> <time> <updates>
 ```
+
+---
+
+
+## Citation
+
+If you use this code in your research or project, please cite the following paper:
+```bibtex
+@article{yuncong2024spyker,
+  title={Spyker: Asynchronous Multi-Server Federated Learning for Geo-Distributed Clients},
+  author={Yuncong Zuo and Bart Cox and Lydia Y. Chen and J{\'{e}}r{\'{e}}mie Decouchant},
+  journal={Middleware 2025},
+  year={2024},
+  url          = {https://doi.org/10.1145/3652892.3700778},
+  doi          = {10.1145/3652892.3700778},
+}
+```
+For more details, you can access the paper at https://doi.org/10.1145/3652892.3700778
 
 ---
 

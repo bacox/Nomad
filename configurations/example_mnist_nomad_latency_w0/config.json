@@ -94,9 +94,9 @@
         10
     ],
     "server_areas": [
-        0,
         2,
-        1
+        1,
+        0
     ],
     "server_0_clientset_locations": [
         [

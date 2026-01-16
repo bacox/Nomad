@@ -10,6 +10,7 @@ plot.png
 plot.pdf
 slurm-*.out
 
+*_idcs.json
 # Generated directories and results
 wandb/
 test/

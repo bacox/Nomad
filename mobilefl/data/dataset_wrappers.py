@@ -1,14 +1,20 @@
 import torch
 from torch.utils.data import DataLoader, Dataset
+
+
 class DatasetShard(Dataset):
     def __init__(self, dataset, idxs, targets, classes):
         super(DatasetShard, self).__init__()
         self.dataset = dataset
         self.idxs = idxs
+
     def __len__(self):
         return len(self.idxs)
+
     def __getitem__(self, item):
         return self.dataset[self.idxs[item]]
+
+
 def wikitext2batchify(dataset, batch_size, seq_len) -> DataLoader:
     data = []
     for tokens in dataset:
@@ -24,4 +30,4 @@ def wikitext2batchify(dataset, batch_size, seq_len) -> DataLoader:
         target = data[:, idx + 1 : idx + seq_len + 1]
         if inputs.shape[1] == seq_len and target.shape[1] == seq_len:
             batches.append([inputs, target])
-    return batches  
+    return batches  # type: ignore

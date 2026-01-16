@@ -1,10 +1,15 @@
 from dataclasses import dataclass
 from enum import Enum
 from typing import List, Optional
+
 import numpy as np
+
+
+# Enum for event unit: either time or round
 class EventUnit(Enum):
     TIME = 1
     ROUND = 2
+
     @classmethod
     def from_string(cls, unit_str: str) -> "EventUnit":
         if unit_str.lower() == "time":
@@ -13,9 +18,13 @@ class EventUnit(Enum):
             return cls.ROUND
         else:
             raise ValueError(f"Unknown event unit: {unit_str}")
+
+
+# Enum for event type: either churn or join
 class EventType(Enum):
     CHURN = 1
     JOIN = 2
+
     @classmethod
     def from_string(cls, event_type_str: str) -> "EventType":
         if event_type_str.lower() == "churn":
@@ -24,11 +33,15 @@ class EventType(Enum):
             return cls.JOIN
         else:
             raise ValueError(f"Unknown event type: {event_type_str}")
+
+
 @dataclass
 class Event:
     when: float
     unit: EventUnit
     event_type: EventType
+
+
 def generate_events(generator_type: str, et: EventType, eu: EventUnit, duration: float, amount: int) -> List[Event]:
     dtype = np.float32 if eu == EventUnit.TIME else np.int32
     moments = []
@@ -37,13 +50,20 @@ def generate_events(generator_type: str, et: EventType, eu: EventUnit, duration:
     elif generator_type == "uniform":
         moments = np.random.uniform(0, duration, amount)
         moments = moments.astype(dtype)
+
     else:
         raise ValueError(f"Unknown generator type: {generator_type}")
     moments = [Event(m, eu, et) for m in moments]
+    # for moment in moments:
+    #     print(f"Generated event at {moment} with type {et} and unit {eu}")
     return moments
+
+
 class EventSystem:
+
     def __init__(self) -> None:
         self.events: List[Event] = []
+
     def add_event(self, when: float, unit: EventUnit, event_type: EventType) -> None:
         """
         Add an event to the event system.
@@ -52,6 +72,7 @@ class EventSystem:
         :param event_type: The type of the event (churn or join).
         """
         self.events.append(Event(when, unit, event_type))
+
     def next_event(self, time_value: float, round_value: int) -> Optional[Event]:
         """
         Get the next event in the event system.
@@ -71,19 +92,23 @@ class EventSystem:
                 break
         else:
             return None
+        # Remove the event from the list after returning it
         self.events.remove(result)
         return result
+
     def has_events(self) -> bool:
         """
         Check if there are any events in the event system.
         :return: True if there are events, False otherwise.
         """
         return len(self.events) > 0
+
     def clear_events(self) -> None:
         """
         Clear all events from the event system.
         """
         self.events.clear()
+
     def __len__(self) -> int:
         """
         Get the number of events in the event system.

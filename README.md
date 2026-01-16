@@ -1,21 +1,23 @@
-# Nomad: Asynchronous Multi-Server Federated Learning
+# Asynchronous Multi-Server Federated Learning
 
-[![Python 3.9](https://img.shields.io/badge/python-3.9-blue.svg)](https://www.python.org/downloads/release/python-390/) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://docs.conda.io/) ![Version](https://img.shields.io/badge/version-1.3.10-blue)
+[![Python 3.9](https://img.shields.io/badge/python-3.9-blue.svg)](https://www.python.org/downloads/release/python-390/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Conda Environment](https://img.shields.io/badge/env-conda-blue)](https://docs.conda.io/)
 
-![Banner](./figures/banner.png)
+
+![Version](https://img.shields.io/badge/version-__VERSION__-blue)
 
 A simulation framework for **Asynchronous Multi-Server Federated Learning (FL)** with support for multiple aggregation strategies, client-server configurations, and dataset settings.
 
-![moveable-clients](./figures/movable-client.png)
-
 ---
 
-## Requirements
+## 🔧 Requirements
 
 Install required packages manually:
 
 ```bash
-pip install torch==2.3.0 torchvision==0.18.0 torchaudio==2.3.0 --index-url https://download.pytorch.org/whl/cu118 torchdata==0.8.0
+
+pip install torch==2.3.0 torchvision==0.18.0 torchaudio==2.3.0 --index-url https://download.pytorch.org/whl/cu118 torchdata==0.9.0
 pip -r requirements.txt
 ```
 
@@ -23,36 +25,44 @@ If you get errors you can install `torchdata==0.7.1` but you'll have to make adj
 
 Add to `torch/utils/data/datapipes/utils/common.py
 ` on line 23.
-
 ```python
 # BC for torchdata
 DILL_AVAILABLE = dill_available()
 ```
+
+or
+```bash
+conda install pytorch==2.3.0 torchvision==0.18.0 torchaudio==2.3.0 pytorch-cuda=11.8 -c pytorch -c nvidia
+# CUDA 12.1
+```
+
+Or use Miniconda:
+
+```bash
+conda env create -f environment.yml
+conda activate mobile_fl
+```
+
 ---
 
-## Running Linters
+## Running Linters:
 
-### Running Ruff
-
+### 🔍 Running Ruff
 ```bash
 ruff check .
 # Or automatically fix problems
 ruff check --fix .
 ```
-
-### Running Black
-
+### 🎨 Running Black
 ```bash
 black --check .
 ```
-
-### Running Mypy
-
+### 🧠 Running Mypy
 ```bash
 mypy .
 ```
 
-## Running Experiments
+## 🚀 Running Experiments
 
 ### Local Run
 
@@ -100,7 +110,7 @@ nohup bash ./runDas.sh example1 -y > debug.out &  # Confirmed run
 
 ---
 
-## Creating New Configurations
+## 📁 Creating New Configurations
 
 1. Create folder: `./configurations/<NewConfig>`
 2. Copy an existing `config.json` into it.
@@ -135,7 +145,7 @@ This creates `./client100.pkl` to reuse fixed clients.
 
 ---
 
-## Plotting Results
+## 📊 Plotting Results
 
 ```bash
 python3 -m mobilefl.plot cifar10
@@ -148,7 +158,7 @@ Log details are in `./log_tools/`.
 
 ---
 
-## Adding New Datasets
+## 🗂️ Adding New Datasets
 
 * Add dataset logic in: `./data/data.py`
 * Add model in: `./models/`
@@ -156,7 +166,7 @@ Log details are in `./log_tools/`.
 
 ---
 
-## Key Configuration Parameters
+## ⚙️ Key Configuration Parameters
 
 | Parameter                        | Description                                            |
 | -------------------------------- | ------------------------------------------------------ |
@@ -182,7 +192,7 @@ Log details are in `./log_tools/`.
 
 ---
 
-## Reproducing Results
+## 📦 Reproducing Results
 
 ### CIFAR-10
 
@@ -206,39 +216,6 @@ Plot results:
 ./runAll.sh mnist <ResultFolderName>
 ./plotAll.sh <ResultFolderName> <time> <updates>
 ```
-
-## Citation
-
-If you use this code in your research or project, please cite the following papers.
-
-Spyker (Middleware 2024):
-```bibtex
-@article{yuncong2024spyker,
-  title={Spyker: Asynchronous Multi-Server Federated Learning for Geo-Distributed Clients},
-  author={Yuncong Zuo and Bart Cox and Lydia Y. Chen and J{\'{e}}r{\'{e}}mie Decouchant},
-  journal={Middleware 2025},
-  year={2024},
-  url          = {https://doi.org/10.1145/3652892.3700778},
-  doi          = {10.1145/3652892.3700778},
-}
-```
-For more details, you can access the Spyker paper at https://doi.org/10.1145/3652892.3700778
-
-Nomad (NCA 2025):
-```bibtex
-@INPROCEEDINGS {11261552,
-author = { Cox, Bart and Chen, Lydia Y. and Decouchant, Jeremie },
-booktitle = { 2025 23rd International Symposium on Network Computing and Applications (NCA) },
-title = {{ Nomad: Accelerating Geo-distributed Learning with Client Transfers }},
-year = {2025},
-month = {Nov}
-pages = {1-8},
-doi = {10.1109/NCA67271.2025.00014},
-url = {https://doi.ieeecomputersociety.org/10.1109/NCA67271.2025.00014},
-publisher = {IEEE Computer Society}
-}
-```
-For more details, you can access the Nomad paper at https://doi.ieeecomputersociety.org/10.1109/NCA67271.2025.00014
 
 ---
 

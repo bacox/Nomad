@@ -4,12 +4,16 @@ import time
 import warnings
 from math import exp
 from typing import List, OrderedDict, Tuple
+
 import torch
+
 from mobilefl.log_tools.logging_style import content, line
 from mobilefl.models.cnncifar import CNNCIFAR
 from mobilefl.models.cnnmnist import CNNMNIST
 from mobilefl.models.lenet import LeNet
 from mobilefl.models.lstm import NextCharacterLSTM
+
+
 class Aggregator:
     def __init__(self, config, vocab_size=0, params=None):
         self.dataset = config.get("dataset")
@@ -25,17 +29,22 @@ class Aggregator:
         self.compute_time = collections.defaultdict(float)
         self.compute_cnt = collections.defaultdict(int)
         self.weight_tracking = collections.defaultdict(list)
+
         self.model = Aggregator.get_model(self.dataset, vocab_size=vocab_size, params=params)
         if self.config.get("cuda"):
             torch.cuda.manual_seed(0)
             self.device = torch.device(f"cuda:{self.config.get('cuda_to_use')}")
         else:
             self.device = "cpu"
+
+        # moving model to GPU is possible
         self.model.to(device=self.device)
+
     @staticmethod
     def get_model(dataset, vocab_size=None, params=None):
         """
         Gets the model according to model name and given parameters
+
         :param dataset: a string indicating the dataset (e.g. "mnist")
         :param params: parameters of the model
         """
@@ -46,6 +55,7 @@ class Aggregator:
                 if len(params) < 3:
                     raise ValueError(f"There should be 3 parameters for CNN model, got {len(params)}")
                 return CNNMNIST(params[0], params[1], params[2])
+
         if dataset == "fmnist":
             if not params:
                 return CNNMNIST()
@@ -53,22 +63,29 @@ class Aggregator:
                 if len(params) < 3:
                     raise ValueError(f"There should be 3 parameters for CNN model, got {len(params)}")
                 return CNNMNIST(params[0], params[1], params[2])
+
         elif dataset == "cifar":
             return CNNCIFAR()
+
         elif dataset == "cifar100":
             return LeNet()
+
         elif dataset == "wikitext2":
             return NextCharacterLSTM(vocab_size=vocab_size, embed_size=100, hidden_size=256, n_layers=2)
+
         else:
             raise ValueError(f"Dataset not supported: {dataset}")
+
     def aggregate(self, updates, cosine=False, aggregation_method="fedavg"):
         """
         Should be called by the server's global model
         gm.aggregate(updates, aggregation_method)
+
         :param updates: a list containing each update
         :param aggregation_method: fedavg or fedsgd
         :return: None
         """
+        # Processing inputs
         if not updates:
             warnings.warn("Updates is empty. Skipping aggregation")
             return
@@ -78,7 +95,10 @@ class Aggregator:
         else:
             if len(updates[0]) != 3:
                 raise ValueError(f"dimension of every update for asynchronous model should be 3, got {len(updates[0])}")
+
+        # aggregation
         if aggregation_method == "fedasync":
+            # raise NotImplementedError("FedAsync is not implemented yet")
             self.fedasync(updates)
         elif aggregation_method == "fedavg":
             raise NotImplementedError("FedAvg is not implemented yet")
@@ -87,6 +107,9 @@ class Aggregator:
             return self.sgd(updates, cosine=cosine)
         else:
             raise Exception("Aggregation method not supported")
+
+    ######################## Client Aggregation ########################
+
     def average(self, updates):
         """
         updates: a list of updates
@@ -96,47 +119,66 @@ class Aggregator:
         raise NotImplementedError("FedAvg is not implemented yet")
         start_time = time.perf_counter()
         n = len(updates)
+        # setting weights
         if not self.client_async:
             weights = [1 / n for _ in range(n)]
-        else:  
+        else:  # the model is async and we consider staleness
             staleness = [updates[i][2] for i in range(n)]
             weights = self.get_weights_according_to_staleness_avg(staleness)
+
         weights = torch.tensor(weights)
         weights.to(device=self.device)
+
+        # averaging
         for part in self.model.state_dict().keys():
             if not torch.is_floating_point(self.model.state_dict()[part].data):
                 continue
             self.model.state_dict()[part].data.fill_(0)
             for i in range(n):
-                update = updates[i][0][part].data.clone() * weights[i]  
+                update = updates[i][0][part].data.clone() * weights[i]  # assuming equal-split dataset among clients
                 update.type(self.model.state_dict()[part].data.dtype)
                 self.model.state_dict()[part].data += update
         end_time = time.perf_counter()
         self.compute_time["fedavg"] += end_time - start_time
         self.compute_cnt["fedavg"] += 1
+
     def sgd(self, updates, cosine=False):
         """
         updates: a list of updates
         edit the global model
         return the offset of the global model
         """
+        # raise NotImplementedError("FedSGD is not implemented yet")
+        # calculate the compute time of the function
         start_time = time.perf_counter()
         n = len(updates)
+        # 保存 self 的完整状态
         original_state = copy.deepcopy(self)
+        # setting weights
         if not self.client_async:
             weights = [1 / n for _ in range(n)]
-        else:  
+        else:  # the model is async and we consider staleness
             staleness = [updates[i][2] for i in range(n)]
+
+            # print(f"Staleness: {staleness}")
+
             weights = self.get_weights_according_to_staleness_sgd(staleness)
+            # print(f"Weights: {type(weights[0])}")
         weights = torch.tensor(weights).to(device=self.device)
+        # exit()
+
         print(f"Staleness factor: {weights}")
+
         if self.momentum is None:
             self.momentum = {}
             for part in self.model.state_dict().keys():
                 self.momentum[part] = torch.zeros_like(self.model.state_dict()[part].data).to(device=self.device)
                 self.momentum[part].type(self.model.state_dict()[part].data.dtype)
+
+        # Initialize gradients before and after update
         gradients_before = []
         gradients_after = []
+
         for part in self.model.state_dict().keys():
             if not torch.is_floating_point(self.model.state_dict()[part].data):
                 continue
@@ -145,13 +187,18 @@ class Aggregator:
                 gradient_before += (
                     updates[i][0][part].data.clone() - self.model.state_dict()[part].data.clone()
                 ) * weights[i]
+            # Save the before-update gradient
             gradients_before.append(gradient_before.view(-1))
+
+        # Apply updates
         for part in self.model.state_dict().keys():
             if not torch.is_floating_point(self.model.state_dict()[part].data):
                 continue
             gradient = self.model.state_dict()[part].data.clone().detach().fill_(0)
             for i in range(n):
                 gradient += (updates[i][0][part].data.clone() - self.model.state_dict()[part].data.clone()) * weights[i]
+
+            # with momentum
             if self.global_momentum_constant > 0:
                 self.momentum[part].data = (
                     self.global_momentum_constant * self.momentum[part].data.clone() + gradient.clone()
@@ -159,6 +206,8 @@ class Aggregator:
                 self.model.state_dict()[part].data += self.momentum[part].data.clone() * self.lr
             else:
                 self.model.state_dict()[part].data += gradient.clone() * self.lr
+
+        # Compute gradient after update
         for part in self.model.state_dict().keys():
             if not torch.is_floating_point(self.model.state_dict()[part].data):
                 continue
@@ -167,45 +216,63 @@ class Aggregator:
                 gradient_after += (
                     updates[i][0][part].data.clone() - self.model.state_dict()[part].data.clone()
                 ) * weights[i]
+            # Save the after-update gradient
             gradients_after.append(gradient_after.view(-1))
+
         end_time = time.perf_counter()
         self.compute_time["sgd"] += end_time - start_time
         self.compute_cnt["sgd"] += 1
+
         if cosine:
+            # Concatenate all gradients
             gradients_before = torch.cat(gradients_before)
             gradients_after = torch.cat(gradients_after)
+
+            # Compute cosine similarity
             cos = torch.nn.CosineSimilarity(dim=0, eps=1e-6)
             gradients_before = gradients_before.cuda() if torch.cuda.is_available() else gradients_before
             gradients_after = gradients_after.cuda() if torch.cuda.is_available() else gradients_after
             cos_value = cos(gradients_before, gradients_after).item()
+
+            # Print cosine similarity value
             print("Cosine similarity = ", cos_value)
+
+            # Restore the original state
             self.__dict__.update(original_state.__dict__)
+
     def fedasync(self, updates):
         """
         New global model = (1 - lr) * global model + lr * update;
         lr = weight * lr
         """
+        # raise NotImplementedError("FedAsync is not implemented yet")
         n = len(updates)
         try:
             staleness = [updates[i][2] for i in range(len(updates))]
             weights = self.get_weights_according_to_staleness_sgd(staleness)
         except IndexError:
             raise ValueError("Staleness not found in updates")
+
         weights = torch.tensor(weights)
         weights.to(device=self.device)
+
         if self.momentum is None:
             self.momentum = {}
             for part in self.model.state_dict().keys():
                 self.momentum[part] = torch.zeros(self.model.state_dict()[part].data.shape).to(device=self.device)
                 self.momentum[part].type(self.model.state_dict()[part].data.dtype)
+            # self.momentum.to(device=self.device)
+
         for part in self.model.state_dict().keys():
             if not torch.is_floating_point(self.model.state_dict()[part].data):
                 continue
             gradient = self.model.state_dict()[part].data.clone().detach().fill_(0)
             for i in range(n):
                 gradient += (updates[i][0][part].data.clone() - self.model.state_dict()[part].data.clone()) * weights[i]
+            # with momentum
             self.momentum[part].data = self.momentum_constant * self.momentum[part].data.clone() + gradient.clone()
             self.model.state_dict()[part].data += self.momentum[part].data.clone() * self.alpha
+
     def get_weights_according_to_staleness_avg(self, staleness):
         """
         In the increasing theme, weight[i] = staleness[i] / sum(staleness).
@@ -214,7 +281,7 @@ class Aggregator:
         """
         weights = []
         staleness_scheme = self.config.get("staleness_scheme")
-        modified_staleness = [max(0, s) + 1 for s in staleness]  
+        modified_staleness = [max(0, s) + 1 for s in staleness]  # make sure no division by 0
         n = len(modified_staleness)
         if staleness_scheme == "increasing":
             denom = sum(modified_staleness)
@@ -228,6 +295,7 @@ class Aggregator:
             nom = s if staleness_scheme == "increasing" else 1 / s
             weights.append(nom / denom)
         return weights
+
     def get_weights_according_to_staleness_sgd(self, staleness):
         """
         In the increasing theme, weight[i] = staleness[i] / sum(staleness).
@@ -248,52 +316,84 @@ class Aggregator:
             return [1 for _ in range(len(staleness))]
         else:
             raise ValueError("Only increasing/decreasing/none is valid for staleness scheme")
+
+    ######################### Server Aggregation #########################
+
     def synchronize(self, peer_buffer: List[Tuple[OrderedDict, int]]):
+        # def synchronize(self, peer_buffer):
         """
         Synchronize the global model with other global models
         Return the average age
         """
+
         start_time = time.perf_counter()
         n = len(peer_buffer)
         ages = [peer_buffer[i][1] for i in range(n)]
         weights = self.get_weights_according_to_age(ages)
+
         weights = torch.tensor(weights)
         print(f"weights: {weights}")
         print(f"ages: {ages}")
         weights.to(device=self.device)
+
         new_params = OrderedDict()
+
         for (sd, _a), w in zip(peer_buffer, weights):
             for k, v in sd.items():
                 new_params[k] = new_params.get(k, 0) + v * w
+
+        # print(f"new_params: {new_params}")
+
+        # copied_model_state_dict = {
+        #     k: v.clone().detach().to(device=self.device) for k, v in self.model.state_dict().items()
+        # }
+
+        # Weighted average of the model parameters state dicts
+
+        # # averaging
+        # for part in self.model.state_dict().keys():
+        #     if not torch.is_floating_point(self.model.state_dict()[part].data):
+        #         continue
+        #     self.model.state_dict()[part].data.fill_(0)
+        #     for i in range(n):
+        #         update = peer_buffer[i][0][part].data.clone() * weights[i]
+        #         self.model.state_dict()[part].data += update
+
         if self.momentum_constant > 0:
+            # raise NotImplementedError("Momentum is not implemented for sync aggregation")
             gradient = {k: v.clone().detach().to(device=self.device) for k, v in self.model.state_dict().items()}
             for part in self.model.state_dict().keys():
                 gradient[part].data -= new_params[part].data.clone()
                 self.momentum[part] = (
                     self.momentum_constant * self.momentum[part].data.clone() + gradient[part].data.clone()
                 )
+
         new_age = 0
         for i in range(n):
             new_age += ages[i] * weights[i].item()
+
         end_time = time.perf_counter()
         self.compute_time["sync"] += end_time - start_time
         self.compute_cnt["sync"] += 1
         return round(new_age, 1)
+
     def cloud_agg(self, server_buffer):
         for j, part in enumerate(self.model.state_dict().keys()):
             if not torch.is_floating_point(self.model.state_dict()[part].data):
                 continue
             self.model.state_dict()[part].data.fill_(0)
             for i in range(len(server_buffer)):
+                # print(server_buffer[i])
                 update = server_buffer[i][part].data.clone() / len(server_buffer)
                 self.model.state_dict()[part].data += update
+
     def get_weights_according_to_age(self, ages):
         """
         In the increasing theme, weight[i] = age[i] / sum(age).
         In the decreasing theme, weight[i] = age[i]^-1 / sum of all inverse of age.
         In the none theme, weight[i] = 1 / len(age)
         """
-        if not any(ages):  
+        if not any(ages):  # sync locally
             return [1 / len(ages) for _ in range(len(ages))]
         weights = []
         _num_ages = len(ages)
@@ -302,6 +402,7 @@ class Aggregator:
             nom = a
             weights.append(nom / denom)
         return weights
+
     def aggregate_peer_sgd(self, peer_state_dict, server_age, peer_age):
         """
         If age_diff < 0, then the peer is younger than the server
@@ -311,37 +412,61 @@ class Aggregator:
         Eliminate all the offset history
         """
         start_time = time.perf_counter()
+        # Get the weight according to the age difference, weight = age_diff + 1 / server_age
         model_offsets = {}
         for part in self.model.state_dict().keys():
             model_offsets[part] = torch.zeros(self.model.state_dict()[part].data.shape)
             model_offsets[part].type(self.model.state_dict()[part].data.dtype)
             model_offsets[part].to(device=self.device)
+
         age_diff = peer_age - server_age
         activation_rate = self.config.get("activation_rate")
+
         weight = 1 / (exp(-activation_rate * age_diff / max(1, server_age)) + 1)
+        # print("     weight:", weight)
         _decay_center = 100
+        # TODO: with or without decay
+        # weight_decay = 1 / (exp(10 * (server_age - decay_center) / decay_center) + 1)
         weight_decay = 1
+        # print("WEIGHT after decay is:", weight * weight_decay)
+
         copied_peer_state_dict = {k: v.clone().detach().to(device=self.device) for k, v in peer_state_dict.items()}
+
         for part in self.model.state_dict().keys():
+            # momentum
             self.momentum[part].data = self.momentum_constant * self.momentum[part].data.clone() + (
                 copied_peer_state_dict[part].data - self.model.state_dict()[part].data
             )
+            # self.model.state_dict()[part].data += self.momentum[part] * self.lr * weight
+            # offset[part] = self.momentum[part] * self.lr * weight
+            # without momentum
+            # eliminate offset from the peer history
             if not torch.is_floating_point(self.model.state_dict()[part].data):
                 continue
+
             learning_coefficient = self.lr_peer * weight * weight_decay
+            # print("Aggregating with learning coefficient:", learning_coefficient)
             offset_part = (
                 copied_peer_state_dict[part].data - self.model.state_dict()[part].data
             ) * learning_coefficient
             self.model.state_dict()[part].data.add_(offset_part)
             model_offsets[part] = offset_part
+
+        # Age takes a step forward
         new_age = round(
             (1 - self.lr_peer * weight * weight_decay) * server_age + self.lr_peer * weight * weight_decay * peer_age
-        )  
+        )  # 4 is a factor that can be tuned, it means how much the manual sgd performances worse than machine leanring sgd
+
+        # self.momentum = None
+
         end_time = time.perf_counter()
         self.compute_time["aggr_peer"] += end_time - start_time
         self.compute_cnt["aggr_peer"] += 1
         return new_age, model_offsets, learning_coefficient
+
     def report(self):
+        # report the computing time of sgd, aggre_peer, sync aggregation methods
+        # save in the file
         with open(
             f"./results/{self.config.get('result_file')}/{self.config.get('name')}.txt",
             "a",
@@ -350,12 +475,14 @@ class Aggregator:
             if self.compute_cnt["sgd"] > 0:
                 f.write(content(f"total sgd time: {self.compute_time['sgd']} for one server") + "\n")
                 f.write(content(f"average sgd time: {self.compute_time['sgd'] / self.compute_cnt['sgd']}") + "\n")
+                # print("average sgd time:", self.compute_time['sgd'] / self.compute_cnt['sgd'])
             if self.compute_cnt["aggr_peer"] > 0:
                 f.write(content(f"total aggr_peer time: {self.compute_time['aggr_peer']} for one server") + "\n")
                 f.write(
                     content(f"average aggr_peer time: {self.compute_time['aggr_peer'] / self.compute_cnt['aggr_peer']}")
                     + "\n"
                 )
+
             if self.compute_cnt["sync"] > 0:
                 f.write(content(f"totoal sync time: {self.compute_time['sync']} for one server") + "\n")
                 f.write(content(f"average sync time: {self.compute_time['sync'] / self.compute_cnt['sync']}") + "\n")

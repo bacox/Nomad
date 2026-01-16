@@ -1,18 +1,25 @@
+# for logging acc-time, acc-updates, acc-updates-total
+# Path: draft\github\logger.py
 import pickle
 from pathlib import Path
 from typing import Union
+
 import matplotlib.pyplot as plt
 import numpy as np
+
 from mobilefl.accuracyMonitor import AccuracyMonitor
 from mobilefl.config import Config
+
+
 class Logger:
     def __init__(self, result_dir: Union[Path, str], config: Config) -> None:
         self.config = config
         if isinstance(result_dir, str):
             result_dir = Path(result_dir)
         self.directory: Path = result_dir
-        self.directory.mkdir(parents=True, exist_ok=True)  
-        self.acc_servers = dict()  
+        self.directory.mkdir(parents=True, exist_ok=True)  # Create directory if it doesn't exist
+        self.acc_servers = dict()  # server_id -> acc, q_len, time, updates, last_acc
+
         [self.init_server(s) for s in range(self.config.get("num_servers"))]
         self.acc_global = {
             "acc": np.array([]),
@@ -37,11 +44,44 @@ class Logger:
             "min_latency": 0,
             "std_latency": 0,
             "client_assignments": list(),
-        }  
-        self.report_window = 20  
+        }  # keys: "global", "std", 0, 1, 2, 3 ...
+        self.report_window = 20  # how much data in the end to take into account in final report
         self.conv_90 = False
         self.conv_95 = False
+
+        # Initialize the accuracy monitor
         self.acc_monitor = AccuracyMonitor(growth_threshold=0.5)
+
+        # # Initialize the plot
+        # self.fig, self.ax = plt.subplots()
+        # self.line, = self.ax.plot([], [], label='Growth Rate')
+        # self.ax.set_xlabel('Time')
+        # self.ax.set_ylabel('Growth Rate')
+        # self.ax.set_title('Accuracy Growth Rate Over Time')
+        # self.ax.legend()
+        # self.ax.grid(True)
+
+        # # Create animation
+        # self.ani = FuncAnimation(self.fig, self.update_plot, init_func=self.init_plot, blit=True)
+
+        # # Start a background thread for the plot
+        # self.plot_thread = threading.Thread(target=self.show_plot)
+        # self.plot_thread.start()
+
+    # def init_plot(self):
+    #     self.line.set_data([], [])
+    #     return self.line,
+
+    # def update_plot(self, frame):
+    #     _, time_history, growth_rate_history = self.acc_monitor.get_history()
+    #     self.line.set_data(time_history[1:], growth_rate_history)
+    #     self.ax.relim()
+    #     self.ax.autoscale_view()
+    #     return self.line,
+
+    # def show_plot(self):
+    #     plt.show(block=False)
+
     def init_server(self, server_id: int):
         self.acc_servers[server_id] = {
             "acc": np.array([]),
@@ -55,9 +95,11 @@ class Logger:
             "min_latency": np.array([]),
             "std_latency": np.array([]),
         }
+
     def log(self, data, time_purge=False, num_fedavg=None):
         """
         log the server and global's acc time updates
+
         time_purge is False means allow duplicate time points in global log
         """
         (
@@ -81,6 +123,7 @@ class Logger:
             data["min_latency"],
             data["std_latency"],
         )
+        # ================================== log servers ========================================
         self.acc_servers[data_id]["acc"] = np.append(self.acc_servers[data_id]["acc"], acc)
         self.acc_servers[data_id]["q_len"] = np.append(self.acc_servers[data_id]["q_len"], q_len)
         self.acc_servers[data_id]["time"] = np.append(self.acc_servers[data_id]["time"], time)
@@ -89,7 +132,9 @@ class Logger:
         self.acc_servers[data_id]["max_latency"] = np.append(self.acc_servers[data_id]["max_latency"], server_max_lat)
         self.acc_servers[data_id]["min_latency"] = np.append(self.acc_servers[data_id]["min_latency"], server_min_lat)
         self.acc_servers[data_id]["std_latency"] = np.append(self.acc_servers[data_id]["std_latency"], server_std_lat)
+
         if num_fedavg is not None:
+            # if self.acc_servers[id]['updates'] is empty
             if self.acc_servers[data_id]["updates"].size == 0:
                 self.acc_servers[data_id]["updates"] = np.append(self.acc_servers[data_id]["updates"], num_fedavg)
             else:
@@ -103,6 +148,7 @@ class Logger:
                 len(self.acc_servers[data_id]["acc"]),
             )
         self.acc_servers[data_id]["last_acc"] = acc
+        # ================================== log global ========================================
         if not time_purge or (len(self.acc_global["time"]) == 0 or time > self.acc_global["time"][-1]):
             num_active = 0
             acc_sum = 0
@@ -131,6 +177,7 @@ class Logger:
             self.acc_global["max_latency"] = np.append(self.acc_global["max_latency"], latency_max / num_active)
             self.acc_global["min_latency"] = np.append(self.acc_global["min_latency"], latency_min / num_active)
             self.acc_global["std_latency"] = np.append(self.acc_global["std_latency"], latency_std / num_active)
+            # self.acc_global["avg_latency"] = np.append(self.acc_global["avg_latency"], server_avg_lat)
             if num_fedavg is not None:
                 if self.acc_global["updates"].size == 0:
                     self.acc_global["updates"] = np.append(self.acc_global["updates"], num_fedavg)
@@ -141,6 +188,8 @@ class Logger:
                     )
             else:
                 self.acc_global["updates"] = np.append(self.acc_global["updates"], len(self.acc_global["acc"]))
+
+            # Update accuracy monitor
             self.acc_monitor.update(self.acc_global["last_acc"], time)
         convergence_path = self.directory / "convergence.txt"
         if not self.conv_90 and self.acc_global["last_acc"] > 0.9:
@@ -153,8 +202,11 @@ class Logger:
                 f.write(f"TIME: 95% accuracy: {time}\n")
                 f.write(f"UPDATES: 95% accuracy: {len(self.acc_global['acc'])}\n")
             self.conv_95 = True
+
     def plot_growth_rate(self):
+        # plot the growth_rate
         accuracy_history, time_history, growth_rate_history = self.acc_monitor.get_history()
+
         plt.figure(figsize=(10, 5))
         plt.plot(time_history[1:], growth_rate_history, label="Growth Rate")
         plt.xlabel("Time")
@@ -163,6 +215,18 @@ class Logger:
         plt.legend()
         plt.grid(True)
         plt.show()
+
+    # def load_global_accuracy(pickle_path):
+    #     with open(pickle_path, "rb") as f:
+    #         acc_global = pickle.load(f)
+    #     return acc_global
+
+    # def compute_growth_rate(acc_global):
+    #     acc_monitor = AccuracyMonitor()
+    #     for acc, time in zip(acc_global['acc'], acc_global['time']):
+    #         acc_monitor.update(acc, time)
+    #     return acc_monitor
+
     def final_logs(self):
         for server_id, data in self.acc_servers.items():
             self.final_report["acc"][server_id] = np.mean(data["acc"][-self.report_window :])
@@ -173,9 +237,16 @@ class Logger:
         self.final_report["time"] = self.acc_global["time"][-1]
         self.final_report["updates"] = self.acc_global["updates"][-1]
         self.final_report["tvd"] = self.acc_global["tvd"][-1]
+
     def save(self, seperate_servers=True):
+        # save into folder result_dir/pickle/
         pickle_path = self.directory / "pickle"
-        pickle_path.mkdir(parents=True, exist_ok=True)  
+        pickle_path.mkdir(parents=True, exist_ok=True)  # Create directory if it doesn't exist
+        # new_path = os.path.join(self.directory, "pickle")
+        # if not os.path.exists(new_path):
+        #     os.makedirs(new_path)
+        # server
+
         if seperate_servers:
             for server_id in range(self.config.get("num_servers")):
                 server_path = pickle_path / f"server{server_id}.pkl"
@@ -185,10 +256,15 @@ class Logger:
             all_servers_path = pickle_path / "servers.pkl"
             with open(all_servers_path, "wb") as f:
                 pickle.dump(self.acc_servers, f)
+
+        # global
         global_path = pickle_path / "global.pkl"
         final_path = pickle_path / "final.pkl"
         with open(global_path, "wb") as f:
             print(f"Saving global accuracy to {global_path}")
+            # print(f"Global accuracy: {self.acc_global}")
             pickle.dump(self.acc_global, f)
+
+        # final
         with open(final_path, "wb") as f:
             pickle.dump(self.final_report, f)

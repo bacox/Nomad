@@ -1,4 +1,5 @@
 from colorama import Back, Fore
+
 colors = [
     Fore.RED,
     Fore.GREEN,
@@ -14,6 +15,7 @@ colors = [
     Fore.LIGHTYELLOW_EX,
     Fore.WHITE,
 ]
+
 backs = [
     Back.RED,
     Back.GREEN,

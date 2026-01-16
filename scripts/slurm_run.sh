@@ -1,0 +1,233 @@
+#!/bin/bash
+
+# Create an list of names: "hello", "world", "mnist", "cifar10"
+## declare an array variable
+declare -a arr=("element1" "element2" "element3")
+
+# declare -a exps=(
+#    "e5_unbalanced_70_multiasync_d"
+#    "e5_unbalanced_70_multiasync_c"
+#    "e5_unbalanced_70_multisync_d"
+#    "e5_unbalanced_70_multiasync_b"
+#    "e5_unbalanced_70_multisync_c"
+#    "e5_unbalanced_70_multiasync_a"
+#    "e5_unbalanced_70_multisync_b"
+#    "e5_unbalanced_70_multisync_a"
+#    "e5_unbalanced_70_hier_b"
+#    "e5_unbalanced_70_hier_c"
+#    "e5_unbalanced_70_hier_a"
+#    "e5_unbalanced_70_hier_d"
+#    "e5_unbalanced_61_hier_b"
+#    "e5_unbalanced_61_hier_a"
+#    "e5_unbalanced_61_multiasync_b"
+#    "e5_unbalanced_61_multisync_c"
+#    "e5_unbalanced_61_multiasync_c"
+#    "e5_unbalanced_61_multisync_d"
+#    "e5_unbalanced_61_hier_c"
+#    "e5_unbalanced_61_multiasync_d"
+#    "e5_unbalanced_61_hier_d"
+#    "e5_unbalanced_61_multisync_a"
+#    "e5_unbalanced_61_multiasync_a"
+#    "e5_unbalanced_61_multisync_b"
+# )
+
+# declare -a exps=(
+# "e5_balanced_hier"
+# "e5_balanced_multiasync"
+# "e5_balanced_multisync"
+# "e5_unbalanced_52_hier_a"
+# "e5_unbalanced_52_hier_b"
+# "e5_unbalanced_52_hier_c"
+# "e5_unbalanced_52_hier_d"
+# "e5_unbalanced_52_multiasync_a"
+# "e5_unbalanced_52_multiasync_b"
+# "e5_unbalanced_52_multiasync_c"
+# "e5_unbalanced_52_multiasync_d"
+# "e5_unbalanced_52_multisync_a"
+# "e5_unbalanced_52_multisync_b"
+# "e5_unbalanced_52_multisync_c"
+# "e5_unbalanced_52_multisync_d"
+# )
+
+# declare -a exps=(
+# "mw_mnist_multiw_baseline_w0"
+# "mw_mnist_multiw_baseline_w1"
+# "mw_mnist_multiw_baseline_w2"
+# "mw_mnist_multiw_random_w0"
+# "mw_mnist_multiw_random_w1"
+# "mw_mnist_multiw_random_w2"
+# )
+
+
+#declare -a exps=(
+#"mw_mnist_move_big_baseline_w0"
+#"mw_mnist_move_big_baseline_w2"
+#"mw_mnist_move_big_latency_w1"
+#"mw_mnist_move_big_random_w0"
+#"mw_mnist_move_big_random_w2"
+#"mw_mnist_move_big_baseline_w1"
+#"mw_mnist_move_big_latency_w0"
+#"mw_mnist_move_big_latency_w2"
+#"mw_mnist_move_big_random_w1"
+#)
+# declare -a exps=(
+# "mw_mnist_move_alg_w0"
+# "mw_mnist_move_alg_w1"
+# "mw_mnist_move_alg_w2"
+# "mw_mnist_move_baseline_w0"
+# )
+
+# declare -a exps=(
+# "mw_mnist_nomad_non_iid_w0"
+# "mw_mnist_nomad_random_w0"
+# "mw_mnist_nomad_latency_w0"
+# "mw_mnist_nomad_none_w0"
+# "mw_mnist_nomad_non_iid_w1"
+# "mw_mnist_nomad_random_w1"
+# "mw_mnist_nomad_latency_w1"
+# "mw_mnist_nomad_none_w1"
+# "mw_mnist_nomad_non_iid_w2"
+# "mw_mnist_nomad_random_w2"
+# "mw_mnist_nomad_latency_w2"
+# "mw_mnist_nomad_none_w2"
+# )
+
+# declare -a exps=(
+# "mw_mnist_static_effect_best_w0"
+# "mw_mnist_static_effect_best_w2"
+# "mw_mnist_static_effect_random_w1"
+# "mw_mnist_static_effect_worst_w0"
+# "mw_mnist_static_effect_worst_w2"   
+# "mw_mnist_static_effect_best_w1"
+# "mw_mnist_static_effect_random_w0"
+# "mw_mnist_static_effect_random_w2"
+# "mw_mnist_static_effect_worst_w1"
+# )
+
+# declare -a exps=(
+# "mw_cifar_nomad_non_iid_w0"
+# "mw_cifar_nomad_random_w0"
+# "mw_cifar_nomad_latency_w0"
+# "mw_cifar_nomad_none_w0"
+# "mw_cifar_nomad_non_iid_w1"
+# "mw_cifar_nomad_random_w1"
+# "mw_cifar_nomad_latency_w1"
+# "mw_cifar_nomad_none_w1"
+# "mw_cifar_nomad_non_iid_w2"
+# "mw_cifar_nomad_random_w2"
+# "mw_cifar_nomad_latency_w2"
+# "mw_cifar_nomad_none_w2"
+# )
+
+# declare -a exps=(
+# "mw_wiki_nomad_non_iid_w0"
+# "mw_wiki_nomad_random_w0"
+# "mw_wiki_nomad_latency_w0"
+# "mw_wiki_nomad_none_w0"
+# "mw_wiki_nomad_non_iid_w1"
+# "mw_wiki_nomad_random_w1"
+# "mw_wiki_nomad_latency_w1"
+# "mw_wiki_nomad_none_w1"
+# "mw_wiki_nomad_non_iid_w2"
+# "mw_wiki_nomad_random_w2"
+# "mw_wiki_nomad_latency_w2"
+# "mw_wiki_nomad_none_w2"
+# )
+
+declare -a exps=(
+   "mw_cifar_long_nomad_non_iid_w0"
+"mw_cifar_long_nomad_random_w0"
+"mw_cifar_long_nomad_latency_w0"
+"mw_cifar_long_nomad_none_w0"
+"mw_cifar_long_nomad_non_iid_w1"
+"mw_cifar_long_nomad_random_w1"
+"mw_cifar_long_nomad_latency_w1"
+"mw_cifar_long_nomad_none_w1"
+"mw_cifar_long_nomad_non_iid_w2"
+"mw_cifar_long_nomad_random_w2"
+"mw_cifar_long_nomad_latency_w2"
+"mw_cifar_long_nomad_none_w2"
+"mw_cifar_long_nomad_non_iid_w3"
+"mw_cifar_long_nomad_random_w3"
+"mw_cifar_long_nomad_latency_w3"
+"mw_cifar_long_nomad_none_w3"
+"mw_cifar_long_nomad_non_iid_w4"
+"mw_cifar_long_nomad_random_w4"
+"mw_cifar_long_nomad_latency_w4"
+"mw_cifar_long_nomad_none_w4"
+"mw_mnist_long_nomad_non_iid_w0"
+"mw_mnist_long_nomad_random_w0"
+"mw_mnist_long_nomad_latency_w0"
+"mw_mnist_long_nomad_none_w0"
+"mw_mnist_long_nomad_non_iid_w1"
+"mw_mnist_long_nomad_random_w1"
+"mw_mnist_long_nomad_latency_w1"
+"mw_mnist_long_nomad_none_w1"
+"mw_mnist_long_nomad_non_iid_w2"
+"mw_mnist_long_nomad_random_w2"
+"mw_mnist_long_nomad_latency_w2"
+"mw_mnist_long_nomad_none_w2"
+"mw_mnist_long_nomad_non_iid_w3"
+"mw_mnist_long_nomad_random_w3"
+"mw_mnist_long_nomad_latency_w3"
+"mw_mnist_long_nomad_none_w3"
+"mw_mnist_long_nomad_non_iid_w4"
+"mw_mnist_long_nomad_random_w4"
+"mw_mnist_long_nomad_latency_w4"
+"mw_mnist_long_nomad_none_w4"
+"mw_mnist_2s_long_nomad_non_iid_w0"
+"mw_mnist_2s_long_nomad_random_w0"
+"mw_mnist_2s_long_nomad_latency_w0"
+"mw_mnist_2s_long_nomad_none_w0"
+"mw_mnist_2s_long_nomad_non_iid_w1"
+"mw_mnist_2s_long_nomad_random_w1"
+"mw_mnist_2s_long_nomad_latency_w1"
+"mw_mnist_2s_long_nomad_none_w1"
+"mw_mnist_2s_long_nomad_non_iid_w2"
+"mw_mnist_2s_long_nomad_random_w2"
+"mw_mnist_2s_long_nomad_latency_w2"
+"mw_mnist_2s_long_nomad_none_w2"
+"mw_mnist_2s_long_nomad_non_iid_w3"
+"mw_mnist_2s_long_nomad_random_w3"
+"mw_mnist_2s_long_nomad_latency_w3"
+"mw_mnist_2s_long_nomad_none_w3"
+"mw_mnist_2s_long_nomad_non_iid_w4"
+"mw_mnist_2s_long_nomad_random_w4"
+"mw_mnist_2s_long_nomad_latency_w4"
+"mw_mnist_2s_long_nomad_none_w4"
+"mw_cifar_2s_long_nomad_non_iid_w0"
+"mw_cifar_2s_long_nomad_random_w0"
+"mw_cifar_2s_long_nomad_latency_w0"
+"mw_cifar_2s_long_nomad_none_w0"
+"mw_cifar_2s_long_nomad_non_iid_w1"
+"mw_cifar_2s_long_nomad_random_w1"
+"mw_cifar_2s_long_nomad_latency_w1"
+"mw_cifar_2s_long_nomad_none_w1"
+"mw_cifar_2s_long_nomad_non_iid_w2"
+"mw_cifar_2s_long_nomad_random_w2"
+"mw_cifar_2s_long_nomad_latency_w2"
+"mw_cifar_2s_long_nomad_none_w2"
+"mw_cifar_2s_long_nomad_non_iid_w3"
+"mw_cifar_2s_long_nomad_random_w3"
+"mw_cifar_2s_long_nomad_latency_w3"
+"mw_cifar_2s_long_nomad_none_w3"
+"mw_cifar_2s_long_nomad_non_iid_w4"
+"mw_cifar_2s_long_nomad_random_w4"
+"mw_cifar_2s_long_nomad_latency_w4"
+"mw_cifar_2s_long_nomad_none_w4"
+)
+
+# now loop through the above array
+# for i in "${arr[@]}"
+# do
+#    echo "$i"
+#    sbatch seq.bash $i
+#    # or do whatever with individual element of the array
+# done
+
+
+for e in "${exps[@]}"
+do
+   echo "$e"
+   sbatch scripts/seq.bash $e
+done

@@ -1,5 +1,8 @@
 from typing import List
+
 from mobilefl.server import Server
+
+
 class SimulateConfig:
     def __init__(
         self,
@@ -17,6 +20,7 @@ class SimulateConfig:
         self.target_client_dataset = self.move_from_server.client_train_datasets[move_client_id]
         self.move_from_server_dataset = self.move_from_server.client_train_datasets
         self.server_dataset = target_server.client_train_datasets
+
     def __str__(self) -> str:
         return (
             f"  - Move from server with ID: {self.move_from_server_id}\n"

@@ -1,0 +1,379 @@
+{
+    "name": "example_latency_w0",
+    "result_file": "example_mnist_nomad",
+    "num_rounds": 100,
+    "dataset": "mnist",
+    "server_heter": false,
+    "alpha": 0.1,
+    "var_control": false,
+    "move_a_client": false,
+    "move_late": false,
+    "alternate_late": false,
+    "avg_model": false,
+    "alternate_new": false,
+    "max_iterations": 20,
+    "cosine": false,
+    "server_iid": false,
+    "client_iid": false,
+    "client_async": true,
+    "server_async": false,
+    "move_clients": false,
+    "rebalance_policy": "latency",
+    "world_config": "world_config_0.json",
+    "server_0_clients": 0.5,
+    "server_1_clients": 0.5,
+    "update_per_sync": 9999999999,
+    "sync_period": 340,
+    "decay_start": 0.7,
+    "agr": "fedsgd",
+    "leader": false,
+    "hier_period": 2,
+    "num_servers": 3,
+    "num_clients": 30,
+    "balanced_num_clients": true,
+    "client_fraction_per_round": 1,
+    "cuda": 1,
+    "cuda_to_use": 0,
+    "num_local_epochs": 5,
+    "batch_size": 32,
+    "aggregation_buffer_size": 1,
+    "local_lr": 0.05,
+    "global_lr": 0.6,
+    "global_lr_peer": 0.5,
+    "num_data_per_client": 0,
+    "client_selection": "random",
+    "l2_mu": 0,
+    "lr_decay": 0.03,
+    "lr_bound": 1e-06,
+    "momentum_client": 0.1,
+    "momentum_global": 0,
+    "momentum_server": 0,
+    "staleness_scheme": "decreasing",
+    "staleness_a": 0.5,
+    "staleness_alpha": 0.6,
+    "staleness_max": 1000,
+    "samespeed": true,
+    "gaussianclient": false,
+    "slow_ratio": 0.9,
+    "medium_ratio": 0,
+    "fast_ratio": 0.1,
+    "fast_mu": 0.5,
+    "medium_mu": 1.0,
+    "slow_mu": 2.0,
+    "token_threshold": 0.2,
+    "comm_delay": 10,
+    "globalsync_delay": 2,
+    "peer_agg_delay": 5,
+    "fedavg_delay": 15,
+    "hier_delay": 15,
+    "fedasync_delay": 2,
+    "num_label_per_client": 2,
+    "dir_beta": 0.5,
+    "acc_sliding_window_len": 50,
+    "weight_decay": 0.0001,
+    "staleness_threshold": 1000,
+    "activation_rate": 1.5,
+    "comm_01": 203.92,
+    "comm_02": 136.84,
+    "comm_03": 151.56,
+    "comm_12": 278.91,
+    "comm_13": 144.01,
+    "comm_23": 138.86,
+    "leader_comm": 150,
+    "training_delay": 200,
+    "server_0_training_delay": 200,
+    "server_1_training_delay": 200,
+    "server_2_training_delay": 200,
+    "server_3_training_delay": 200,
+    "server_4_training_delay": 200,
+    "server_5_training_delay": 200,
+    "server_6_training_delay": 200,
+    "num_clients_per_server": [
+        10,
+        10,
+        10
+    ],
+    "server_areas": [
+        2,
+        1,
+        0
+    ],
+    "server_0_clientset_locations": [
+        [
+            35.94311992498458,
+            82.28191691391518
+        ],
+        [
+            48.54777725655373,
+            19.927294464417344
+        ],
+        [
+            55.79588300396271,
+            89.74240330075048
+        ],
+        [
+            51.862950007761064,
+            1.8912677242095555
+        ],
+        [
+            44.31622820429164,
+            19.0210559988933
+        ],
+        [
+            67.51492841894155,
+            32.01788762608615
+        ],
+        [
+            5.413773942601708,
+            42.12611971487742
+        ],
+        [
+            42.48206749810004,
+            37.14766855386162
+        ],
+        [
+            53.85364236266973,
+            12.225568559005106
+        ],
+        [
+            47.93312827690712,
+            51.85671738767552
+        ]
+    ],
+    "server_1_clientset_locations": [
+        [
+            62.44153568505653,
+            92.50817865121385
+        ],
+        [
+            97.09935914370608,
+            87.28316182530659
+        ],
+        [
+            83.434923397768,
+            5.182349771320471
+        ],
+        [
+            6.153435942634189,
+            95.6225901480609
+        ],
+        [
+            57.332139978265,
+            51.52167659781425
+        ],
+        [
+            2.056556062056525,
+            55.92023783585174
+        ],
+        [
+            73.12465822877925,
+            32.196671243411046
+        ],
+        [
+            78.069436755237,
+            64.83695229930497
+        ],
+        [
+            98.1703612572814,
+            34.403156603419546
+        ],
+        [
+            4.371745317934339,
+            45.02695898600106
+        ]
+    ],
+    "target_servers": [
+        1
+    ],
+    "selected_clients": {
+        "1": [
+            5,
+            0
+        ]
+    },
+    "speed_of_server_1_client_0": 2.6281936114668762,
+    "speed_of_server_1_client_1": 2.3241748381783838,
+    "speed_of_server_1_client_2": 5.815235063581585,
+    "speed_of_server_1_client_3": 9.275773666353228,
+    "speed_of_server_1_client_4": -0.6339692890914899,
+    "speed_of_server_1_client_5": 3.0056070507637336,
+    "speed_of_server_1_client_6": 1.9278104391503004,
+    "speed_of_server_1_client_7": 1.0372491806328894,
+    "speed_of_server_1_client_8": 1.5092019982047125,
+    "speed_of_server_0_client_0": 52.84386812679149,
+    "speed_of_server_0_client_1": 64.72180986725216,
+    "speed_of_server_0_client_2": 49.87856958097767,
+    "speed_of_server_0_client_3": 82.99364046079903,
+    "speed_of_server_0_client_4": 74.37865533427312,
+    "speed_of_server_0_client_5": 66.14287114190785,
+    "speed_of_server_0_client_6": 71.62731580940007,
+    "speed_of_server_0_client_7": 91.56139696506969,
+    "speed_of_server_1_client_9": 1.5240874598902465,
+    "speed_of_server_1_client_10": 61.705565037095624,
+    "speed_of_server_1_client_11": 56.505179984684986,
+    "speed_of_server_1_client_12": 95.56299457969844,
+    "speed_of_server_1_client_13": 75.91360655941935,
+    "speed_of_server_1_client_14": 130.11033129055747,
+    "server_2_clientset_locations": [
+        [
+            27.689092988912122,
+            88.3417794787979
+        ],
+        [
+            21.096000762485588,
+            36.52279699149194
+        ],
+        [
+            94.5439457761733,
+            51.29513883025144
+        ],
+        [
+            89.13612927729935,
+            46.76930589827622
+        ],
+        [
+            97.3708817189036,
+            45.81744618971443
+        ],
+        [
+            97.39719012869429,
+            61.083540910186265
+        ],
+        [
+            52.04253599999673,
+            34.9572864717955
+        ],
+        [
+            94.72747512346244,
+            42.90743127117296
+        ],
+        [
+            10.287987042735224,
+            39.038005537348155
+        ],
+        [
+            57.56222423279532,
+            30.05365163516118
+        ]
+    ],
+    "server_3_clientset_locations": [
+        [
+            69.66583562660351,
+            51.4331102370258
+        ],
+        [
+            14.981182395627124,
+            75.30715440477806
+        ],
+        [
+            47.02563694838351,
+            39.69233270672049
+        ],
+        [
+            19.10641658727562,
+            89.63246609010056
+        ],
+        [
+            67.7978917728379,
+            18.18210668201243
+        ],
+        [
+            11.158622910599592,
+            71.8797748809073
+        ],
+        [
+            95.80833934591172,
+            47.321555994706074
+        ],
+        [
+            2.1975640168795163,
+            58.01408980208285
+        ],
+        [
+            44.57199131816248,
+            9.780479739006998
+        ],
+        [
+            50.151102298193464,
+            49.63034571444266
+        ],
+        [
+            80.2344158456479,
+            20.952761336990243
+        ],
+        [
+            33.881772701940505,
+            78.86109309644903
+        ],
+        [
+            83.27164834117195,
+            11.545038177519428
+        ],
+        [
+            56.896084539320455,
+            91.93342215154867
+        ],
+        [
+            5.601781002398376,
+            40.38796212912291
+        ]
+    ],
+    "speed_of_server_0_client_8": 76.75335304177723,
+    "speed_of_server_0_client_9": 70.30144252557591,
+    "speed_of_server_0_client_10": 1.2846916857819046,
+    "speed_of_server_0_client_11": 0.027181063757053453,
+    "speed_of_server_0_client_12": -0.9902543232234057,
+    "speed_of_server_0_client_13": 0.28735996226839994,
+    "speed_of_server_0_client_14": 2.1653052154904198,
+    "speed_of_server_1_client_15": 123.95057366180566,
+    "speed_of_server_1_client_16": 124.87026200891997,
+    "speed_of_server_1_client_17": 111.3417499774855,
+    "speed_of_server_1_client_18": 131.3495952481037,
+    "speed_of_server_1_client_19": 1.3036399447636622,
+    "speed_of_server_1_client_20": 0.04394582151289683,
+    "speed_of_server_1_client_21": 0.22846222727025758,
+    "speed_of_server_1_client_22": 0.019921797086456992,
+    "speed_of_server_1_client_23": 0.5446701549980968,
+    "speed_of_server_1_client_24": 4.798319914711593,
+    "speed_of_server_1_client_25": 0.05271859067364261,
+    "speed_of_server_1_client_26": -0.006344779134808909,
+    "speed_of_server_1_client_27": 0.8478091174162299,
+    "speed_of_server_1_client_28": 0.750923876657586,
+    "speed_of_server_2_client_30": 3.5398751558532737,
+    "speed_of_server_2_client_31": -3.4136028981398034,
+    "speed_of_server_2_client_32": 4.114225707119194,
+    "speed_of_server_2_client_33": -0.016829925131793752,
+    "speed_of_server_2_client_34": 2.1049219622697843,
+    "speed_of_server_2_client_35": -4.527240448521326,
+    "speed_of_server_2_client_36": 1.059443865242224,
+    "speed_of_server_2_client_37": 2.442266562915116,
+    "speed_of_server_2_client_38": 3.890577734433274,
+    "speed_of_server_2_client_39": 11.012145024945415,
+    "speed_of_server_2_client_40": 0.9102706656919195,
+    "speed_of_server_2_client_41": 3.944529803828756,
+    "speed_of_server_2_client_42": 6.539620630580785,
+    "speed_of_server_2_client_43": -0.7468522499355027,
+    "speed_of_server_3_client_45": 2.003442145105769,
+    "speed_of_server_3_client_46": 1.5324701797189035,
+    "speed_of_server_3_client_47": 0.2957236499731232,
+    "speed_of_server_3_client_48": 1.5809114268199802,
+    "speed_of_server_3_client_49": 2.620174061043566,
+    "speed_of_server_3_client_50": 1.5642052843027818,
+    "speed_of_server_3_client_51": 2.0220804327950503,
+    "speed_of_server_3_client_52": 2.4307811913190847,
+    "speed_of_server_3_client_53": 4.145153097450732,
+    "speed_of_server_3_client_54": -0.08376142034779639,
+    "speed_of_server_3_client_55": 1.0614847262272327,
+    "speed_of_server_3_client_56": 2.071715697796836,
+    "speed_of_server_3_client_57": 0.6229383524252112,
+    "speed_of_server_3_client_58": 1.5183051676277575,
+    "speed_of_server_2_client_20": 96.62055922378104,
+    "speed_of_server_2_client_21": 105.27090678110338,
+    "speed_of_server_2_client_22": 117.80977232713053,
+    "speed_of_server_2_client_23": 54.103112029380824,
+    "speed_of_server_2_client_24": 102.9684004991197,
+    "speed_of_server_2_client_25": 124.99204028971039,
+    "speed_of_server_2_client_26": 94.28006793331664,
+    "speed_of_server_2_client_27": 48.827593025239985,
+    "speed_of_server_2_client_28": 99.40170420373009
+}

@@ -1,16 +1,23 @@
 import torch
 import torch.nn.functional as F
 from torch import nn
+
+
 class LeNet(nn.Module):
+
     def __init__(self, output_dim: int = 100):
         super(LeNet, self).__init__()
+
         self.conv1 = nn.Conv2d(3, 6, 5)
         self.conv2 = nn.Conv2d(6, 16, 5)
         self.fc1 = nn.Linear(16 * 5 * 5, 120)
         self.fc2 = nn.Linear(120, 84)
         self.fc3 = nn.Linear(84, output_dim)
+
         self.criterion = torch.nn.CrossEntropyLoss()
+        # version updated along with weights to show which version of the model the worker is using
         self.version = 0
+
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         x = F.relu(self.conv1(x))
         x = F.max_pool2d(x, 2)

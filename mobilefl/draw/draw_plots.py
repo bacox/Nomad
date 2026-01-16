@@ -1,10 +1,14 @@
 import sys
+
 import matplotlib.pyplot as plt
 import numpy as np
+
+
 def plot_sigmoid(
     start: float, speed: float, lr: float, lower_bound: float, num_rounds: float = 30000, num_clients: float = 64
 ) -> None:
     global fig, ax1
+    # plot the lr decay function
     sigmoid_bound = lower_bound / lr
     x = np.linspace(0, 800, 200)
     y = lr * (
@@ -15,17 +19,28 @@ def plot_sigmoid(
     ax1.set_xlabel("Number of updates")
     ax1.set_ylabel("Learning rate")
     ax1.set_title("Learning rate decay function")
+    # ax1.set_ylim(0, 0.06)
+    # ax1.set_xlim(0, 800)
+
+
 def plot_linear(
     start: float, speed: float, lr: float, lower_bound: float, num_rounds: float = 30000, num_clients: float = 64
 ) -> None:
     global fig, ax2
     x = np.linspace(0, 800, 200)
+    # from 0 to start * num_rounds // num_clients, lr is lr(0.05)
+    # from start * num_rounds // num_clients, lr is lr - speed * x
+    # after lr is lower_bound, which is 0.0001, it remains 0.0001
     y = np.maximum(lr - speed * (x - start * num_rounds // num_clients), lower_bound)
     ax2.plot(x, y)
     ax2.grid()
     ax2.set_xlabel("Number of updates")
     ax2.set_ylabel("Learning rate")
     ax2.set_title("Learning rate decay function")
+    # ax2.set_ylim(0, 0.06)
+    # ax2.set_xlim(0, 800)
+
+
 if __name__ == "__main__":
     if len(sys.argv) < 5:
         print("Usage: python3 draw_plots.py decay_start decay_speed num_updates num_clients")
@@ -47,4 +62,5 @@ if __name__ == "__main__":
         plot_linear(start, speed, lr, lower_bound, num_rounds, num_clients)
     else:
         raise ValueError("No plot is selected")
+
     plt.show()
